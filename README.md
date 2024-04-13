@@ -1,5 +1,5 @@
-# NeoGen
-A repository so I can store stuff here from my NeoGen line of homebrew projects that people can also use.
+# BittyZ80
+A repository so I can store stuff here from my BittyZ80 line of homebrew projects that people can also use.
 I'm new to posting stuff on Github so pardon me if my stuff and layout is sloppy.
 This project is made specifically for my particular system, but feel free to adapt the code to your use!
 This is a Z80-based system with:
