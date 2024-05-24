@@ -42,21 +42,8 @@ START:
     OUT (PIOCOMMANDb), A
     LD A, $C0 ; Set I/O on port B
     OUT (PIOCOMMANDb), A
-;    LD A, $1F ; set lines low
-;    OUT (PIODATAb), A
 
-;OUTER:
-;    LD DE, 100h
 
-;INNER:
- ;   DEC DE
-  ;  LD A, D
-   ; OR E
-;    JP NZ, INNER
-;    DEC BC
-;    LD A, B
-;    OR C
-;    JP NZ, OUTER
 
 	
 
@@ -168,6 +155,7 @@ GETSCANCODE:
 	CALL Init
 	CP A, $F0
 	JR Z, KEYUP
+	
 
 KEYDOWN:
 	
@@ -210,19 +198,6 @@ SCANCODEIN:
 Ret
 
 
-;GETSCANCODE:
-;	CALL Init
-;	CP A, $F0
-;	JR Z, KEYUP
-
-;KEYDOWN:
-;	CALL SCANCODETOASCII
-;	RET
-
-;KEYUP:
-;	CALL GETSCANCODE
-;	JP GETSCANCODE
-
 
 
 
@@ -234,12 +209,10 @@ SCANCODETOASCII:
     LD D, 0    ;Upper byte zero
     ADD HL, DE ;Add offset to base
     LD A, (HL)  ;Get translated value
-	;CALL TXROUTINE
 	POP HL
 	CP A, $08
 	JR Z, .BACKSPACE
 	SUB A, $20
-	;CALL SOUND_LOOP
 	CALL VDP_WRITEADDR
 	INC HL
 
@@ -283,6 +256,27 @@ TXROUTINE:
         RET	
 
 
+
+;Cursor timer, set for one second
+
+OUTERCURSOR:
+    LD DE, 1000h
+
+INNERCURSOR:
+    DEC DE
+    LD A, D
+    OR E
+    JP NZ, INNERCURSOR
+    DEC BC
+    LD A, B
+    OR C
+    JP NZ, OUTERCURSOR
+	RET
+
+
+
+
+
 	
 ; Data in A, reg (low 3 bits) in B
 VDP_WRITEREG:
@@ -314,6 +308,8 @@ VDP_READSTAT:
 	IN	A, (VDP_REG)
 	RET
 	
+
+; This is what is mainly used to put data onto the screen or memory in general within VRAM
 ; Change addr to HL (14-bit) then write A
 VDP_WRITEADDR:
 	PUSH	AF
@@ -647,94 +643,4 @@ db $1c, $30, $30, $e0, $30, $30, $1c, $00; U+007B () (offset $5b)
 db $18, $18, $18, $00, $18, $18, $18, $00; U+007C (|) (offset $5c)
 db $e0, $30, $30, $1c, $30, $30, $e0, $00; U+007D () (offset $5d)
 db $76, $dc, $00, $00, $00, $00, $00, $00; U+007E (~) (offset $5e)
-
-;Scancodes
-
-
-
-;DB $01 ; F9
-;DB $03 ; F5
-;DB $04 ; F3
-;DB $05 ; F1
-;DB $06 ; F6
-;DB $07 ; F12
-;DB $09 ; F10
-;DB $0A ; F8
-;DB $0B ; F6
-;DB $0C ; F4
-;DB $0D ; TAB
-;DB $0E ; `
-;DB $11 ; ALT LEFT
-;DB $12 ; SHIFT LEFT
-;DB $14 ; CTRL LEFT
-;DB $15 ; Q
-;DB $16 ; 1
-;DB $1A ; Z
-;DB $1B ; S
-;DB $1C ; A
-;DB $1D ; W
-;DB $1E ; 2
-;DB $21 ; C
-;DB $22 ; X
-;DB $23 ; D
-;DB $24 ; E
-;DB $25 ; 4
-;DB $26 ; 3
-;DB $29 ; SPACEBAR
-;DB $2A ; V
-;DB $2B ; F
-;DB $2C ; T
-;DB $2D ; R
-;DB $2E ; 5
-;DB $31 ; N
-;DB $32 ; B
-;DB $33 ; H
-;DB $34 ; G
-;DB $35 ; Y
-;DB $36 ; 6
-;DB $3A ; M
-;DB $3B ; J
-;DB $3C ; U
-;DB $3D ; 7
-;DB $3E ; 8
-;DB $41 ; ,
-;DB $42 ; K
-;DB $43 ; I
-;DB $44 ; O
-;DB $45 ; 0
-;DB $46 ; 9
-;DB $49 ; .
-;DB $4A ; /
-;DB $4B ; L
-;DB $4C ; ;
-;DB $4D ; P
-;DB $4E ; -
-;DB $52 ; '
-;DB $54 ; [
-;DB $55 ; =
-;DB $58 ; CAPSLOCK
-;DB $59 ; SHIFT RIGHT
-;DB $5A ; ENTER
-;DB $5B ; ]
-;DB $5D ; \
-;DB $66 ; BACKSPACE
-;DB $69 ; 1
-;DB $6B ; 4
-;DB $6C ; 7
-;DB $70 ; 0
-;DB $71 ; .
-;DB $72 ; 2
-;DB $73 ; 5
-;DB $74 ; 6
-;DB $75 ; 8
-;DB $76 ; ESC
-;DB $77 ; NUMLOCK
-;DB $78 ; F11
-;DB $79 ; +
-;DB $7A ; 3
-;DB $7B ; -
-;DB $7C ; *
-;DB $7D ; 9
-;DB $7E ; SCROLL LOCK
-;DB $83 ; F7
 
