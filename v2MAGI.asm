@@ -1,10 +1,6 @@
 CPU Z80
 ORG $0000
 
-; Thank you to the Retro Tech Crew for their help over the past year or so.
-; Id personally like to thank Chartreuse and ZephyrZ80 for their continous help
-; Even if I can be a pain sometimes! Lol
-; Thank you guys!
 
 PORT_VDP:    	EQU 0x0020
 VDP_RAM:		EQU PORT_VDP+1
@@ -51,6 +47,7 @@ START:
 
     OUT (PIODATAb), A
 	SOUND_INIT:
+	
 
 	LD A, $8F
 	CALL SOUND_LOOP
@@ -219,6 +216,9 @@ SCANCODETOASCII:
    
     JP GETSCANCODE
 
+	.Enter:
+		
+		
 
 	.BACKSPACE:
 		LD A, $00
